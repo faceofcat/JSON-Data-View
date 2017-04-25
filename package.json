@@ -1,0 +1,31 @@
+{
+  "name": "jsondataview",
+  "version": "0.0.1",
+  "devDependencies": {
+    "@types/jquery": "^2.0.41",
+    "@types/node": "^7.0.13",
+    "gulp": "^3.9.1",
+    "gulp-less": "^3.3.0",
+    "gulp-sourcemaps": "^2.6.0",
+    "gulp-typescript": "^3.1.6",
+    "jquery": "^3.2.1",
+    "jquery-ui": "^1.12.1",
+    "merge2": "^1.0.3",
+    "typescript": "^2.2.2"
+  },
+  "description": "Face of Cat did this!",
+  "main": "jsonview.js",
+  "dependencies": {
+    "jquery-ui": "^1.12.1",
+    "jquery": "^3.2.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Face of Cat",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/faceofcat/JSON-Data-View.git"
+  }
+}

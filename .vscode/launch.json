@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "preLaunchTask": "build",
+            "type": "chrome",
+            "request": "launch",
+            "disableNetworkCache": true,
+            "name": "Launch Chrome against test file",
+            "file": "${workspaceRoot}/dist/test.html",
+            "webRoot": "${workspaceRoot}"
+        }
+    ]
+}

@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "sourceMap": true,
+        "declaration": true,
+        "outFile": "jsonview.js"
+    },
+    "include": [
+        "**/*.ts"
+    ],
+    "exclude": [
+        "*.d.ts"
+    ]
+}
