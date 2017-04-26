@@ -1,44 +1,45 @@
-/// <reference path="property-views/propertiesfactory.ts" />
+/// <reference path="datafilter.ts" />
+/// <reference path="dataviewfactory.ts" />
+/// <reference path="entityminer.ts" />
 
 namespace net.ndrei.json {
-    function createNodes(json: any): JQuery {
-        const ul = $('<ul />');
-
-        if (json) {
-            for(let key in json) {
-                const value = json[key];
-                const li = $('<li />');
-
-                if ($.isFunction(value)) {
-                    li.text(`${key}: function`);
-                }
-                else if ($.isPlainObject(value)) {
-                    li.text(`${key}:`);
-                    li.append(createNodes(value));
-                } else {
-                    const view = PropertiesFactory.createProperty(key, value);
-                    if (view) {
-                        view.render(li);
-                    }
-                    else {
-                        // skip this item as it has no view
-                        continue;
-                    }
-                }
-                ul.append(li);
-            }
-        }
-
-        return ul;
-    }
-
     export class JSONView {
         public static create(host: JQuery, json: any): JSONView {
-            // host.append(createNodes(json));
-            const view = PropertiesFactory.createProperty('', json);
-            if (view) {
-                view.render(host);
+
+            if (json) {
+                const filterKeys = ['underscore'];
+                const dataViewFactorykeys = ['json'];
+                const entityMinerKey = 'json';
+                const entityViewKey = 'default';
+
+                const filters: DataFilter[] = [];
+                if(dataFilterRegistry) {
+                    filterKeys.forEach(k => {
+                        const f = dataFilterRegistry[k];
+                        if (f) {
+                            filters.push(f());
+                        }
+                    });
+                }
+
+                const viewFactories: DataViewFactory[] = [];
+                if (dataViewFactoryRegistry) {
+                    dataViewFactorykeys.forEach(k => {
+                        const f = dataViewFactoryRegistry[k];
+                        if (f) {
+                            viewFactories.push(f());
+                        }
+                    });
+                }
+
+                const entityViewBuilder = (entityViewKey && entityViewRegistry) ? entityViewRegistry[entityViewKey] : undefined;
+
+                const miner: EntityMiner = entityMinerRegistry ? entityMinerRegistry[entityMinerKey] : undefined;
+                if (miner) {
+                    new JsonContext(filters, viewFactories, miner, entityViewBuilder, host, json).render();
+                }
             }
+
             return undefined;
         }
     }
