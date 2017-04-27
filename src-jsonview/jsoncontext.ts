@@ -2,11 +2,15 @@
 /// <reference path="dataviewfactory.ts" />
 /// <reference path="entityview.ts" />
 /// <reference path="entityminer.ts" />
+/// <reference path="entityinfoprovider.ts" />
+/// <reference path="datainfoprovider.ts" />
 
 namespace net.ndrei.json {
     export class JsonContext {
         constructor(
-            public readonly filters: DataFilter[],
+            public readonly entityInfoProviders: EntityInfoProvider[],
+            public readonly dataFilters: DataFilter[],
+            public readonly dataInfoProviders: DataInfoProvider[],
             public readonly dataViewFactories: DataViewFactory[],
             public readonly miner: EntityMiner,
             public readonly entityViewBuilder: (entity: EntityInfo) => EntityView,
@@ -23,15 +27,17 @@ namespace net.ndrei.json {
             }
         }
 
-        public clone(container: JQuery, entity: any, entityLayoutKey: string): JsonContext {
+        public clone(container: JQuery, entity: any, entityLayoutKey: string = null): JsonContext {
             return new JsonContext(
-                this.filters,
+                this.entityInfoProviders,
+                this.dataFilters,
+                this.dataInfoProviders,
                 this.dataViewFactories,
                 this.miner,
                 this.entityViewBuilder,
                 container || this.container,
                 entity || this.entity,
-                entityLayoutKey || entityLayoutKey);
+                entityLayoutKey || this.entityLayoutKey);
         }
     }
 }

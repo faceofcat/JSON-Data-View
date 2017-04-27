@@ -13,18 +13,40 @@
         <script type="text/javascript" src="pgrid.js"></script>
     </head>
     <body>
-        <div id="gigi" />
+        <table>
+            <tr>
+                <td>
+                    <div id="gigi" />
+                </td>
+                <td>
+                    <div id="mihaitza" style="border-left: 1px solid steelblue; padding-left: 25px; margin-left: 25px;" />
+                </td>
+            </tr>
+        </table>
         <script type="text/javascript">
-            net.ndrei.json.JSONView.create($('#gigi'), {
+            var x = {
                 test1: 5,
                 test2: 'mihaitza',
                 'null': null,
                 _fake: 425,
                 __really_fake: 425,
                 test3: {
+                    _metadata: {
+                        a: {
+                            label: 'costelush'
+                        },
+                        b: {
+                            label: 'mihaitza'
+                        }
+                    },
                     a: 42,
                     b: '425',
                     xxx: {
+                        _metadata: {
+                            _info: {
+                                layoutKey: 'table'
+                            }
+                        },
                         costel: 'mihaitza',
                         mihaitza: 'costel'
                     },
@@ -32,7 +54,10 @@
                     d: function() { console.log("Gigi was here!"); }
                 },
                 test4: function(thing) { console.log('Gigi and ' + thing + ' were here!'); }
-            });
+            };
+            net.ndrei.json.JSONView.create($('#gigi'), x);
+
+            $('<pre />').text(JSON.stringify(x, null, 2)).appendTo($('#mihaitza'));
         </script>
     </body>
 </html>

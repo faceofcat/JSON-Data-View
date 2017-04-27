@@ -4,7 +4,8 @@
         "noImplicitAny": true,
         "sourceMap": true,
         "declaration": true,
-        "outFile": "jsonview.js"
+        "outFile": "jsonview.js",
+        "noEmitOnError": true
     },
     "include": [
         "**/*.ts"

@@ -1,14 +1,16 @@
+/// <reference path="../jsoncontext.ts" />
+/// <reference path="../datainfo.ts" />
 /// <reference path="../dataview.ts" />
 
 namespace net.ndrei.json.dataviews {
     export abstract class JsonDataView<T> implements DataView {
-        constructor(protected label: string, protected value: T, private _layoutKey: string = 'labeled') {
+        constructor(protected info: DataInfo, private _layoutKey: string = 'labeled') {
         }
 
         get layoutKey(): string { return this._layoutKey; }
 
         render(context: JsonContext, layout: DataLayout): void {
-            layout.renderDefaultLabel(this.label);
+            layout.renderDefaultLabel(this.info.label);
 
             layout.getValueContainer()
                 .addClass(this.getValueClass())
@@ -18,13 +20,14 @@ namespace net.ndrei.json.dataviews {
         protected abstract getValueClass(): string;
 
         protected getValueText(): string {
-            return ((this.value != null) && (this.value != undefined)) ? this.value.toString() : 'null';
+            const value = this.info.getValue();
+            return ((value != null) && (value != undefined)) ? value.toString() : 'null';
         }
     }
 
     export class SimpleDataView<T> extends JsonDataView<T> {
-        constructor(label: string, value: T, private valueClass: string) {
-            super(label, value);
+        constructor(info: DataInfo, private valueClass: string, _layoutKey: string = 'labeled') {
+            super(info, _layoutKey);
         }
 
         protected getValueClass(): string {
@@ -32,3 +35,6 @@ namespace net.ndrei.json.dataviews {
         }
     }
 }
+
+net.ndrei.json.dataViewRegistry['number'] = info => new net.ndrei.json.dataviews.SimpleDataView(info, 'data-value-number');
+net.ndrei.json.dataViewRegistry['string'] = info => new net.ndrei.json.dataviews.SimpleDataView(info, 'data-value-string');

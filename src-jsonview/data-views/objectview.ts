@@ -1,10 +1,9 @@
-/// <reference path="jsondataview.ts" />
+/// <reference path="../jsoncontext.ts" />
+/// <reference path="../datalayout.ts" />
 
 namespace net.ndrei.json.dataviews {
-    import JSONView = net.ndrei.json.JSONView;
-    import JsonMiner = net.ndrei.json.entityminers.JsonMiner;
     export class ObjectDataView implements DataView {
-        constructor(private label: string, private value: any) {
+        constructor(private info: DataInfo) {
         }
 
         get layoutKey(): string {
@@ -13,11 +12,13 @@ namespace net.ndrei.json.dataviews {
 
         render(context: JsonContext, layout: DataLayout): void {
             layout.getContainer().addClass('collapsable');
-            layout.renderDefaultLabel(this.label);
+            layout.renderDefaultLabel(this.info.label);
             
             context
-                .clone(layout.getValueContainer(), this.value, 'table')
+                .clone(layout.getValueContainer(), this.info.getValue())
                 .render();
         }
     }
 }
+
+net.ndrei.json.dataViewRegistry['object'] = info => new net.ndrei.json.dataviews.ObjectDataView(info);

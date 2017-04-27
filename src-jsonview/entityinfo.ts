@@ -1,17 +1,13 @@
 namespace net.ndrei.json {
     export interface EntityInfo {
-        readonly layoutKey: string;
+        layoutKey: string;
         readonly data: DataInfo[];
     }
 
     export class SimpleEntityInfo implements EntityInfo {
         private _data: DataInfo[] = [];
 
-        constructor(private _layoutKey: string = 'list') {
-        }
-
-        get layoutKey(): string {
-            return this._layoutKey;
+        constructor(public layoutKey: string = 'list') {
         }
 
         get data(): DataInfo[] {

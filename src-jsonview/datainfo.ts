@@ -1,8 +1,10 @@
 namespace net.ndrei.json {
     export interface DataInfo {
-        readonly category: string[];
-        readonly label: string;
-        readonly layoutKey: string;
+        category: string[];
+        label: string;
+        layoutKey: string;
+        index: number;
+        viewKey: string;
 
         getValue(): any;
         createView(): DataView;
@@ -10,11 +12,13 @@ namespace net.ndrei.json {
 
     export class JsonDataInfo implements DataInfo {
         constructor(
-            public readonly category: string[],
-            public readonly label: string,
+            public category: string[],
+            public label: string,
+            public index: number,
             private value: any,
-            private dataViewCreator: (info: DataInfo) => DataView) {
-        }
+            public viewKey: string
+            // private dataViewCreator: (info: DataInfo) => DataView) {
+            ) { }
 
         getValue(): any {
             return this.value;
@@ -25,7 +29,9 @@ namespace net.ndrei.json {
         }
 
         createView(): DataView {
-            return (this.dataViewCreator ? this.dataViewCreator(this) : undefined);
+            // return (this.dataViewCreator ? this.dataViewCreator(this) : undefined);
+            const creator = (this.viewKey && dataViewRegistry) ? dataViewRegistry[this.viewKey] : undefined;
+            return creator ? creator(this) : undefined;
         }
     }
 }

@@ -5,6 +5,12 @@ namespace net.ndrei.json.entityminers {
         digIntoEntity(context: JsonContext): EntityInfo {
             const info = new SimpleEntityInfo(context.entityLayoutKey || 'list');
 
+            if (context.entityInfoProviders) {
+                context.entityInfoProviders.forEach(p => {
+                    p.addInformation(context, info);
+                });
+            }
+
             let entity = context.entity;
             if (entity && !$.isPlainObject(entity)) {
                 entity = { value: entity };
@@ -12,20 +18,24 @@ namespace net.ndrei.json.entityminers {
 
             if (entity) {
                 Object.getOwnPropertyNames(entity).forEach(memberName => {
-                    if (!context.filters || !context.filters.length || context.filters.every(f => f.canBeUsed(entity, memberName))) {
+                    if (!context.dataFilters || !context.dataFilters.length || context.dataFilters.every(f => f.canBeUsed(entity, memberName))) {
                         const descriptor = Object.getOwnPropertyDescriptor(entity, memberName);
-                        let view: DataView = undefined;
+                        let viewKey: string = undefined;
                         for(let index in (context.dataViewFactories || [])) {
                             const factory = context.dataViewFactories[index];
-                            view = factory ? factory.getView(entity, memberName, descriptor) : null;
-                            if (view) {
+                            viewKey = factory ? factory.getViewKey(entity, memberName, descriptor) : null;
+                            if (viewKey) {
                                 break;
                             }
                         }
 
-                        if (view) {
-                            info.addData(new JsonDataInfo([], memberName, descriptor.value, i => view));
+                        const data = new JsonDataInfo([], memberName, 0, descriptor.value, viewKey || 'string');
+                        if (context.dataInfoProviders) {
+                            context.dataInfoProviders.forEach(p => {
+                                p.addInformation(context, memberName, data);
+                            });
                         }
+                        info.addData(data);
                     }
                 });
             }
