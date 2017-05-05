@@ -7,8 +7,16 @@
 namespace net.ndrei.json {
     export class JSONView {
         public static create(host: JQuery, json: any): JSONView {
+            return new JSONView(host, json);
+        }
 
-            if (json) {
+        private constructor(protected readonly host: JQuery, protected readonly target: any) {
+            this.host.data({ _jsonView: this });
+            this.initialLoad();
+        }
+
+        private initialLoad(): void {
+            if (this.target) {
                 const entityInfoProviderKeys = ['json_metadata'];
                 const filterKeys = ['underscore'];
                 const dataInfoProviderKeys = ['json_metadata'];
@@ -59,11 +67,13 @@ namespace net.ndrei.json {
 
                 const miner: EntityMiner = entityMinerRegistry ? entityMinerRegistry[entityMinerKey] : undefined;
                 if (miner) {
-                    new JsonContext(entityInfoProviders, filters, dataInfoProviders, viewFactories, miner, entityViewBuilder, host, json).render();
+                    new JsonContext(entityInfoProviders, filters, dataInfoProviders, viewFactories, miner, entityViewBuilder, this.host, this.target).render();
                 }
             }
+        }
 
-            return undefined;
+        public valueChanged(path: string): void {
+            
         }
     }
 }

@@ -2,15 +2,21 @@
 
 namespace net.ndrei.json.entitylayouts {
     export class DataList implements EntityLayout {
+        private container: JQuery
         private ul: JQuery;
 
-        constructor(private container: JQuery) {
+        constructor() {
+        }
+
+        public initialize(container: JQuery): BaseLayout {
+            this.container = container;
             this.ul = $('<ul class="entity-list" />');
             this.ul.data({ layout: this });
             this.container.append(this.ul);
+            return this;
         }
 
-        addData(data: DataLayout): EntityLayout {
+        addData(data: DataLayout): DataCategoryLayout {
             const li = $('<li />');
             this.ul.append(li);
             data.initialize(li);
@@ -20,4 +26,4 @@ namespace net.ndrei.json.entitylayouts {
     }
 }
 
-net.ndrei.json.entityLayoutRegistry['list'] = (container: JQuery) => new net.ndrei.json.entitylayouts.DataList(container);
+net.ndrei.json.entityLayoutRegistry['list'] = () => new net.ndrei.json.entitylayouts.DataList();

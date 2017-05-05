@@ -30,7 +30,7 @@ namespace net.ndrei.json.datainfoproviders {
                     info.label = metadata.label;
                 }
                 if (metadata.category) {
-                    info.category = $.isArray(info.category) ? info.category : [info.category];
+                    info.category = $.isArray(metadata.category) ? metadata.category : [metadata.category];
                 }
                 if (metadata.index) {
                     info.index = metadata.index;

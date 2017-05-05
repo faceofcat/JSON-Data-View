@@ -33,7 +33,7 @@ namespace net.ndrei.json.dataviewfactories {
                     // return new ObjectDataView(memberName, value);
                     return 'object';
                 }
-                else if ($.isNumeric(value)) {
+                else if (typeof(value) == "number") {
                     // numeric value
                     // return new SimpleDataView(memberName, <number>value, 'data-value-number');
                     return 'number';

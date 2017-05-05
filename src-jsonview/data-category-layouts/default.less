@@ -1,0 +1,13 @@
+ul.category-list {
+    > li {
+        list-style-type: none;
+
+        > .data-label::after {
+            content: ':';
+            margin-right: 5px;
+        }
+    }
+    > li.collapsable {
+        list-style-type: disc;
+    }
+}

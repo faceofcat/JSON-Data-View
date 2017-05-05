@@ -8,7 +8,7 @@
                 crossorigin="anonymous"></script>
         <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/humanity/jquery-ui.css" />
         <link rel="stylesheet" href="jsonview.css" />
-        <link rel="stylesheet" href="pgrid.css" />
+        <!--<link rel="stylesheet" href="pgrid.css" />-->
         <script type="text/javascript" src="jsonview.js"></script>
         <script type="text/javascript" src="pgrid.js"></script>
     </head>
@@ -33,10 +33,19 @@
                 test3: {
                     _metadata: {
                         a: {
-                            label: 'costelush'
+                            label: 'costelush',
+                            category: 'GIGI'
                         },
                         b: {
                             label: 'mihaitza'
+                        },
+                        e : {
+                            label: 'fake boolean',
+                            viewKey: 'boolean',
+                            category: 'GIGI'
+                        },
+                        c: {
+                            category: ['GIGI']
                         }
                     },
                     a: 42,
@@ -51,7 +60,8 @@
                         mihaitza: 'costel'
                     },
                     c: false,
-                    d: function() { console.log("Gigi was here!"); }
+                    d: function() { console.log("Gigi was here!"); },
+                    e: 5
                 },
                 test4: function(thing) { console.log('Gigi and ' + thing + ' were here!'); }
             };
