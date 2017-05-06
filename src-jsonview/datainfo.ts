@@ -1,37 +1,38 @@
-namespace net.ndrei.json {
-    export interface DataInfo {
-        category: string[];
-        label: string;
-        layoutKey: string;
-        index: number;
-        viewKey: string;
+/// <reference path="jsoncontext.ts" />
+/// <reference path="entityinfo.ts" />
+/// <reference path="nodeinfo.ts" />
 
-        getValue(): any;
-        createView(): DataView;
+namespace net.ndrei.json {
+    /**
+     * Interface used to describe a property
+     */
+    export interface DataInfo extends NodeInfo {
+        getValue(context: JsonContext): any;
+
+        view: DataView;
     }
 
-    export class JsonDataInfo implements DataInfo {
-        constructor(
-            public category: string[],
-            public label: string,
-            public index: number,
-            private value: any,
-            public viewKey: string
-            // private dataViewCreator: (info: DataInfo) => DataView) {
-            ) { }
-
-        getValue(): any {
-            return this.value;
+    export class JsonDataInfo extends JsonNodeInfo implements DataInfo {
+        constructor(dataPath: string) {
+            super(dataPath);
         }
 
-        get layoutKey(): string {
-            return 'labeled';
+        view: DataView = undefined;
+
+        getValue(context: JsonContext): any {
+            return context ? context.getValue(this.dataPath) : undefined;
         }
 
-        createView(): DataView {
+        toJSON(): any {
+            return $.extend(super.toJSON(), {
+            });
+        }
+
+        // todo: move this to an exported method in dataview.ts
+        static createView(info: DataInfo): DataView {
             // return (this.dataViewCreator ? this.dataViewCreator(this) : undefined);
-            const creator = (this.viewKey && dataViewRegistry) ? dataViewRegistry[this.viewKey] : undefined;
-            return creator ? creator(this) : undefined;
+            const creator = (info && info.viewKey && dataViewRegistry) ? dataViewRegistry[info.viewKey] : undefined;
+            return creator ? creator(info) : undefined;
         }
     }
 }

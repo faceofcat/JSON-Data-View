@@ -21,6 +21,9 @@
                 <td>
                     <div id="mihaitza" style="border-left: 1px solid steelblue; padding-left: 25px; margin-left: 25px;" />
                 </td>
+                <td>
+                    <div id="costelush" style="border-left: 1px solid steelblue; padding-left: 25px; margin-left: 25px;" />
+                </td>
             </tr>
         </table>
         <script type="text/javascript">
@@ -65,9 +68,13 @@
                 },
                 test4: function(thing) { console.log('Gigi and ' + thing + ' were here!'); }
             };
-            net.ndrei.json.JSONView.create($('#gigi'), x);
+            var view = net.ndrei.json.JSONView.create($('#gigi'), x);
 
             $('<pre />').text(JSON.stringify(x, null, 2)).appendTo($('#mihaitza'));
+            $('<pre />').text(JSON.stringify(view.context.rootEntityInfo, /* function(k, v) {
+                if (k == 'value') { return '{{value}}'; }
+                return v;
+            } */ null, 2)).appendTo($('#costelush'));
         </script>
     </body>
 </html>

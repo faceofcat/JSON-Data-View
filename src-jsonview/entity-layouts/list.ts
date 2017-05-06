@@ -5,11 +5,16 @@ namespace net.ndrei.json.entitylayouts {
         private container: JQuery
         private ul: JQuery;
 
-        constructor() {
+        constructor(private hasTitle: boolean) {
         }
 
         public initialize(container: JQuery): BaseLayout {
             this.container = container;
+
+            if (this.hasTitle) {
+                this.container.append($(`<div class="entity-list-title">TITLE</div>`));
+            }
+
             this.ul = $('<ul class="entity-list" />');
             this.ul.data({ layout: this });
             this.container.append(this.ul);
@@ -26,4 +31,5 @@ namespace net.ndrei.json.entitylayouts {
     }
 }
 
-net.ndrei.json.entityLayoutRegistry['list'] = () => new net.ndrei.json.entitylayouts.DataList();
+net.ndrei.json.entityLayoutRegistry['list'] = () => new net.ndrei.json.entitylayouts.DataList(false);
+net.ndrei.json.entityLayoutRegistry['titled-list'] = () => new net.ndrei.json.entitylayouts.DataList(true);

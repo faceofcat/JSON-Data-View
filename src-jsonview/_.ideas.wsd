@@ -1,0 +1,33 @@
+@startuml
+participant context
+collections entity_miner
+collections data_info_provider
+participant entity_view
+collections category_layout
+collections data_view
+
+context -> context: parse configuration
+
+== gather entity data tree ==
+
+context ->o entity_miner: dig into entity
+note right: for each entity miner\nin array
+entity_miner -> entity_miner: filter members
+entity_miner ->o data_info_provider: add data information
+note right: for each data info\nprovider in array
+data_info_provider -> entity_miner: filled in data information
+entity_miner -> context: filled in entity information
+
+== render entity data tree ==
+
+context -> entity_view: render()
+entity_view -> entity_view: gather category tree info
+entity_view ->o category_layout: render()
+note right: for each category\nin order
+category_layout ->o data_view: render()
+note right: for each data item\nin category
+data_view --> category_layout
+category_layout --> entity_view
+entity_view --> context
+
+@enduml

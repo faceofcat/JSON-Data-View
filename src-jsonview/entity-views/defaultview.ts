@@ -3,32 +3,34 @@
 namespace net.ndrei.json.entityviews {
     import entityViewRegistry = net.ndrei.json.entityViewRegistry;
     
-    export class DefaultView implements EntityView {
-        constructor(private entityInfo: EntityInfo) {
+    export class DefaultView extends EntityViewBase /* implements EntityView */ {
+        constructor(entity: EntityInfo) {
+            super(entity);
         }
 
-        render(context: JsonContext): void {
-            if (this.entityInfo && entityLayoutRegistry) {
-                const layoutBuilder = entityLayoutRegistry[this.entityInfo.layoutKey || 'list'];
-                const layout: EntityLayout = layoutBuilder ? layoutBuilder() : undefined;
+        render(/* context: ViewContext, */ layout: EntityLayout): void {
+            if (this.entity /* && entityLayoutRegistry */) {
+                // const layoutBuilder = entityLayoutRegistry[this.entity.layoutKey || 'list'];
+                // const layout: EntityLayout = layoutBuilder ? layoutBuilder() : undefined;
 
-                if (layout && this.entityInfo.data && this.entityInfo.data.length && dataLayoutRegistry) {
-                    layout.initialize(context.container);
-                    this.layoutCategory(context, 0, this.entityInfo.data, layout);
+                if (/* layout && */ this.entity.data && this.entity.data.length && dataLayoutRegistry) {
+                    // layout.initialize(context.container);
+                    this.layoutCategory(this.entity.context.getJsonContext(), 0, this.entity.data, layout);
                 }
             }
         }
 
-        private layoutCategory(context: JsonContext, depth: number, data: DataInfo[], parent: DataCategoryLayout) {
+        private layoutCategory(context: JsonContext, depth: number, data: NodeInfo[], parent: DataCategoryLayout) {
             if (!data || !data.length) {
                 return;
             }
 
             const categories: string[] = [];
-            const organized: { [category: string]: DataInfo[] } = {};
+            const organized: { [category: string]: /* { data: DataInfo, depth: number}*/ NodeInfo[] } = {};
             organized[''] = [];
             data.forEach(data => {
                 let categoryKey = '';
+                let dataDepth = depth + 1;
                 if (data && data.category && (data.category.length > depth)) {
                     // sub-category
                     categoryKey = data.category[depth];
@@ -37,7 +39,8 @@ namespace net.ndrei.json.entityviews {
                     categories.push(categoryKey);
                     organized[categoryKey] = [];
                 }
-                organized[categoryKey].push(data);
+
+                organized[categoryKey].push(data); // { data: data, depth: dataDepth });
             });
 
             if (categories.length) {
@@ -54,14 +57,34 @@ namespace net.ndrei.json.entityviews {
             }
 
             organized[''].forEach(data => {
-                const dataLayoutBuilder = (data && data.layoutKey) ? dataLayoutRegistry[data.layoutKey] : undefined;
-                const dataLayout = dataLayoutBuilder ? dataLayoutBuilder() : undefined;
-                if (dataLayout) {
-                    const view = data.createView();
-                    if (view) {
-                        parent.addData(dataLayout);
-                        view.render(context, dataLayout);
+                if (data instanceof JsonDataInfo) {
+                    const dataLayoutKey = (data ? data.layoutKey : undefined) || 'labeled';
+                    const dataLayoutBuilder = dataLayoutRegistry ? dataLayoutRegistry[dataLayoutKey] : undefined;
+                    const dataLayout = dataLayoutBuilder ? dataLayoutBuilder() : undefined;
+                    if (dataLayout) {
+                        const view = JsonDataInfo.createView(data);
+                        if (view) {
+                            parent.addData(dataLayout);
+                            view.render(context, dataLayout);
+                        }
+                    } 
+                    else {
+                        console.log(`Data layout '${dataLayoutKey}' not found!`);
                     }
+                } else if (data instanceof JsonEntityInfo) {
+                    const entityLayoutKey = (data ? data.layoutKey : undefined) || 'titled-list';
+                    const entityLayoutBuilder = entityLayoutRegistry ? entityLayoutRegistry[entityLayoutKey] : undefined;
+                    const entityLayout = entityLayoutBuilder ? entityLayoutBuilder() : undefined;
+                    if (entityLayout) {
+                        const view = getEntityView(data);
+                        if (view) {
+                            parent.addData(entityLayout);
+                            view.render(entityLayout);
+                        }
+                    }
+                }
+                else {
+                    console.log('Unknown node info type.', data);
                 }
             });
         }

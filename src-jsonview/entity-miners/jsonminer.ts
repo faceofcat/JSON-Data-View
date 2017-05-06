@@ -1,21 +1,27 @@
 /// <reference path="../entityminer.ts" />
+/// <reference path="../data-views/objectview.ts" />
 
 namespace net.ndrei.json.entityminers {
+    import ObjectDataView = net.ndrei.json.dataviews.ObjectDataView;
+
     export class JsonMiner implements EntityMiner {
-        digIntoEntity(context: JsonContext): EntityInfo {
-            const info = new SimpleEntityInfo(context.entityLayoutKey || 'list');
+        digIntoEntity(info: EntityInfo): EntityInfo {
+            if (info && info.context) {
+                if (info.context.entityInfoProviders) {
+                    info.context.entityInfoProviders.forEach(p => {
+                        p.addInformation(info);
+                    });
+                }
 
-            if (context.entityInfoProviders) {
-                context.entityInfoProviders.forEach(p => {
-                    p.addInformation(context, info);
-                });
+                const entity = info.context.getValue();
+
+                this.gatherEntityData(info.context.getJsonContext(), '', entity, d => info.addData(d));
             }
+        
+            return info;
+        }
 
-            let entity = context.entity;
-            if (entity && !$.isPlainObject(entity)) {
-                entity = { value: entity };
-            }
-
+        private gatherEntityData(context: JsonContext, parentPath: string, entity: any, callback: (data: NodeInfo) => void) {
             if (entity) {
                 Object.getOwnPropertyNames(entity).forEach(memberName => {
                     if (!context.dataFilters || !context.dataFilters.length || context.dataFilters.every(f => f.canBeUsed(entity, memberName))) {
@@ -29,18 +35,31 @@ namespace net.ndrei.json.entityminers {
                             }
                         }
 
-                        const data = new JsonDataInfo([], memberName, 0, descriptor.value, viewKey || 'string');
+                        const data = new JsonDataInfo(parentPath + memberName);
                         if (context.dataInfoProviders) {
                             context.dataInfoProviders.forEach(p => {
-                                p.addInformation(context, memberName, data);
+                                p.addInformation(context, parentPath + memberName, data);
                             });
                         }
-                        info.addData(data);
+
+                        if (viewKey && (!dataViewRegistry || !dataViewRegistry[viewKey])) {
+                            // unknown view key
+                            viewKey = undefined;
+                        }
+
+                        if ((!viewKey || !viewKey.length) && $.isPlainObject(descriptor.value)) {
+                            // looks like an unhandled object
+                            const childContext = context.createChildContext(memberName);
+                            const child = new JsonEntityInfo(childContext);
+                            callback(child);
+                        }
+                        else if (viewKey) {
+                            data.viewKey = viewKey;
+                            callback(data);
+                        }
                     }
                 });
             }
-
-            return info;
         }
     }
 }

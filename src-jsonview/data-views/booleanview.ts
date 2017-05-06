@@ -6,8 +6,8 @@ namespace net.ndrei.json.dataviews {
             super(info, 'data-value-boolean');
         }
 
-        protected getValueText(): string {
-            return this.info.getValue() ? 'true' : 'false';
+        protected getValueText(context: JsonContext): string {
+            return this.info.getValue(context) ? 'true' : 'false';
         }
     }
 }

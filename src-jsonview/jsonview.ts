@@ -10,6 +10,8 @@ namespace net.ndrei.json {
             return new JSONView(host, json);
         }
 
+        private _context: JsonContext | undefined = undefined;
+
         private constructor(protected readonly host: JQuery, protected readonly target: any) {
             this.host.data({ _jsonView: this });
             this.initialLoad();
@@ -67,12 +69,17 @@ namespace net.ndrei.json {
 
                 const miner: EntityMiner = entityMinerRegistry ? entityMinerRegistry[entityMinerKey] : undefined;
                 if (miner) {
-                    new JsonContext(entityInfoProviders, filters, dataInfoProviders, viewFactories, miner, entityViewBuilder, this.host, this.target).render();
+                    this._context = new JsonContext(entityInfoProviders, filters, dataInfoProviders, viewFactories, miner, entityViewBuilder, this.host, this.target);
+                    this._context.render();
                 }
             }
         }
 
-        public valueChanged(path: string): void {
+        get context(): JsonContext | undefined {
+            return this._context;
+        }
+
+        valueChanged(path: string): void {
             
         }
     }

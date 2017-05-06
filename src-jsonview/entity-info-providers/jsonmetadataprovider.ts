@@ -5,8 +5,8 @@ namespace net.ndrei.json.entityinfoproviders {
         constructor() {
         }
 
-        addInformation(context: JsonContext, info: EntityInfo): void {
-            const entity = context.entity;
+        addInformation(info: EntityInfo): void {
+            const entity = info.context.getValue();
 
             let raw = undefined;
             // step 1. look for {entity}._metadata._info

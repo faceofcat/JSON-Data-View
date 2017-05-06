@@ -14,13 +14,13 @@ namespace net.ndrei.json.dataviews {
 
             layout.getValueContainer()
                 .addClass(this.getValueClass())
-                .text(this.getValueText());
+                .text(this.getValueText(context));
         }
 
         protected abstract getValueClass(): string;
 
-        protected getValueText(): string {
-            const value = this.info.getValue();
+        protected getValueText(context: JsonContext): string {
+            const value = this.info.getValue(context);
             return ((value != null) && (value != undefined)) ? value.toString() : 'null';
         }
     }
