@@ -5,5 +5,6 @@ namespace net.ndrei.json {
 
     export interface EntityLayout extends DataCategoryLayout {
         // addData(data: DataLayout): EntityLayout;
+        setLabel(label: string): EntityLayout;
     }
 }

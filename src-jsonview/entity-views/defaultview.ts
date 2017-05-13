@@ -15,6 +15,10 @@ namespace net.ndrei.json.entityviews {
 
                 if (/* layout && */ this.entity.data && this.entity.data.length && dataLayoutRegistry) {
                     // layout.initialize(context.container);
+                    if (this.entity.label && this.entity.label.length) {
+                        layout.setLabel(this.entity.label);
+                    }
+
                     this.layoutCategory(this.entity.context.getJsonContext(), 0, this.entity.data, layout);
                 }
             }
@@ -46,7 +50,9 @@ namespace net.ndrei.json.entityviews {
             if (categories.length) {
                 const categoryLayoutBuilder = dataCategoryLayoutRegistry ? dataCategoryLayoutRegistry['default'] : undefined;
                 if (categoryLayoutBuilder) {
-                    categories.forEach(c => {
+                    categories.sort((a, b) => {
+                            return a.localeCompare(b);
+                        }).forEach(c => {
                         const layout = categoryLayoutBuilder(c);
                         if (layout) {
                             parent.addData(layout);
@@ -56,7 +62,23 @@ namespace net.ndrei.json.entityviews {
                 }
             }
 
-            organized[''].forEach(data => {
+            organized[''].sort((a, b) => {
+                    if (!a && !b) {
+                        return 0;
+                    }
+                    else if (!a && b) {
+                        return -1;
+                    }
+                    else if (a && !b) {
+                        return 1;
+                    }
+                    else if (a.index == b.index) {
+                        return (a.label || '').localeCompare(b.label || '');
+                    }
+                    else {
+                        return a.index - b.index;
+                    }
+                }).forEach(data => {
                 if (data instanceof JsonDataInfo) {
                     const dataLayoutKey = (data ? data.layoutKey : undefined) || 'labeled';
                     const dataLayoutBuilder = dataLayoutRegistry ? dataLayoutRegistry[dataLayoutKey] : undefined;
@@ -72,7 +94,7 @@ namespace net.ndrei.json.entityviews {
                         console.log(`Data layout '${dataLayoutKey}' not found!`);
                     }
                 } else if (data instanceof JsonEntityInfo) {
-                    const entityLayoutKey = (data ? data.layoutKey : undefined) || 'titled-list';
+                    const entityLayoutKey = (data ? data.layoutKey : undefined) || 'list';
                     const entityLayoutBuilder = entityLayoutRegistry ? entityLayoutRegistry[entityLayoutKey] : undefined;
                     const entityLayout = entityLayoutBuilder ? entityLayoutBuilder() : undefined;
                     if (entityLayout) {

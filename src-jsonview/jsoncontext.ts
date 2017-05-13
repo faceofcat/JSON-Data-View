@@ -61,12 +61,17 @@ namespace net.ndrei.json {
         //         entityLayoutKey || this.entityLayoutKey);
         // }
 
-        getValue(dataPath: string) {
+        getValue(dataPath: string, overrideLastPart: string = undefined) {
             let result = this.entity;
-            (dataPath || '').split('.').every(p => {
+            (dataPath || '').split('.').every((p, i, a) => {
+                if (overrideLastPart && (i == (a.length - 1))) {
+                    p = overrideLastPart;
+                }
+
                 if (p && p.length) {
                     result = result[p];
                 }
+                
                 return (result != undefined) && (result != null);
             });
             return result;

@@ -3,7 +3,7 @@
 namespace net.ndrei.json.dataviews {
     export class FunctionDataView extends SimpleDataView<string> {
         constructor(info: DataInfo) {
-            super(info, 'data-value-function');
+            super(info, 'data-value-function', '<{0}>');
         }
 
         protected getValueText(): string {

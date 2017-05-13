@@ -49,7 +49,7 @@ namespace net.ndrei.json {
         }
 
         get label(): string {
-            return this._label || this.dataPath.substr(this.dataPath.lastIndexOf('.') + 1);
+            return this._label || (this.dataPath ? this.dataPath.substr(this.dataPath.lastIndexOf('.') + 1) : '');
         }
         set label(value: string) {
             this._label = value;

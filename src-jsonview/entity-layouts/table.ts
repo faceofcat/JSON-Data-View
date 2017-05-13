@@ -8,8 +8,11 @@ namespace net.ndrei.json.entitylayouts {
         constructor() {
         }
 
-        public initialize(container: JQuery): BaseLayout {
+        initialize(container: JQuery): BaseLayout {
             this.container = container;
+
+            this.container.append($(`<div class="entity-list-title not-set"></div>`));
+
             this.table = $('<div class="entity-table" />');
             this.table.data({ layout: this });
             this.container.append(this.table);
@@ -17,6 +20,13 @@ namespace net.ndrei.json.entitylayouts {
             const header = $('<div class="entity-table-row entity-table-header"><span class="data-label">Property</span><span class="data-value">Value</span></div>')
             this.table.append(header);
             
+            return this;
+        }
+
+        setLabel(label: string): EntityLayout {
+            this.container.find('.entity-list-title')
+                .removeClass('not-set')
+                .html(label);
             return this;
         }
 

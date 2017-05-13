@@ -15,7 +15,7 @@ namespace net.ndrei.json.entityminers {
 
                 const entity = info.context.getValue();
 
-                this.gatherEntityData(info.context.getJsonContext(), '', entity, d => info.addData(d));
+                this.gatherEntityData(info.context.getJsonContext(), info.dataPath, entity, d => info.addData(d));
             }
         
             return info;
@@ -35,10 +35,12 @@ namespace net.ndrei.json.entityminers {
                             }
                         }
 
-                        const data = new JsonDataInfo(parentPath + memberName);
+                        const dataPath = parentPath ? `${parentPath}.${memberName}`: memberName;
+
+                        const data = new JsonDataInfo(dataPath);
                         if (context.dataInfoProviders) {
                             context.dataInfoProviders.forEach(p => {
-                                p.addInformation(context, parentPath + memberName, data);
+                                p.addInformation(context, dataPath, data);
                             });
                         }
 
@@ -49,7 +51,7 @@ namespace net.ndrei.json.entityminers {
 
                         if ((!viewKey || !viewKey.length) && $.isPlainObject(descriptor.value)) {
                             // looks like an unhandled object
-                            const childContext = context.createChildContext(memberName);
+                            const childContext = context.createChildContext(dataPath);
                             const child = new JsonEntityInfo(childContext);
                             callback(child);
                         }

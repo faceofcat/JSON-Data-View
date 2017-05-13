@@ -14,15 +14,20 @@
     </head>
     <body>
         <table>
-            <tr>
-                <td>
-                    <div id="gigi" />
-                </td>
+            <tr style="text-align: center; font-family: arial; background-color: whitesmoke; border-bottom: 1px solid darkgray; padding: 5px; font-weight: bold; font-size: 14px;">
+                <td>ORIGINAL</td>
+                <td>PARSED</td>
+                <td>OUTPUT</td>
+            </tr>
+            <tr style="vertical-align: top">
                 <td>
                     <div id="mihaitza" style="border-left: 1px solid steelblue; padding-left: 25px; margin-left: 25px;" />
                 </td>
                 <td>
                     <div id="costelush" style="border-left: 1px solid steelblue; padding-left: 25px; margin-left: 25px;" />
+                </td>
+                <td>
+                    <div id="gigi" />
                 </td>
             </tr>
         </table>
@@ -70,7 +75,12 @@
             };
             var view = net.ndrei.json.JSONView.create($('#gigi'), x);
 
-            $('<pre />').text(JSON.stringify(x, null, 2)).appendTo($('#mihaitza'));
+            $('<pre />').text(JSON.stringify(x, function(k, v) {
+                if ($.isFunction(v)) {
+                    return '<function>';
+                }
+                return v;
+            }, 2)).appendTo($('#mihaitza'));
             $('<pre />').text(JSON.stringify(view.context.rootEntityInfo, /* function(k, v) {
                 if (k == 'value') { return '{{value}}'; }
                 return v;

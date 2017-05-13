@@ -5,17 +5,20 @@ namespace net.ndrei.json.datainfoproviders {
         constructor() {
         }
 
-        addInformation(context: JsonContext, member: string, info: DataInfo): void {
+        addInformation(context: JsonContext, dataPath: string, info: DataInfo): void {
             const entity = context.entity;
 
             let raw = undefined;
+            const metadata = context.getValue(dataPath, '_metadata');
+            const memberName = dataPath.substr(dataPath.lastIndexOf('.') + 1);
+
             // step 1. look for {entity}._metadata.{member}
-            if (entity && entity._metadata && entity._metadata[member]) {
-                raw = entity._metadata[member];
+            if (metadata && metadata[memberName]) {
+                raw = metadata[memberName];
             }
             // step 2. look for {entity}._{member}Info
             if (!raw) {
-                raw = entity[`_${member}Info`];
+                raw = context.getValue(dataPath, `_${memberName}Info`);
             }
 
             if (raw) {
