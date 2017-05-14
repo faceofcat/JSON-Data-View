@@ -1,4 +1,5 @@
 /// <reference path="nodeinfo.ts" />
+/// <reference path="datainfo.ts" />
 
 namespace net.ndrei.json {
     export interface EntityInfo extends NodeInfo {
@@ -13,8 +14,13 @@ namespace net.ndrei.json {
     export class JsonEntityInfo extends JsonNodeInfo implements EntityInfo {
         private _data: NodeInfo[] = [];
 
-        constructor(public readonly context: EntityContext) {
+        constructor(public readonly context: EntityContext/* , original: DataInfo */) {
             super(context.dataPath);
+
+            // copy metadata
+            // this.label = original.label;
+            // this.category = original.category;
+            // this.index = original.index;
 
             context.applyTo(this);
         }

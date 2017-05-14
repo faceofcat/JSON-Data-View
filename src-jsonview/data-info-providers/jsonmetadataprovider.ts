@@ -5,7 +5,7 @@ namespace net.ndrei.json.datainfoproviders {
         constructor() {
         }
 
-        addInformation(context: JsonContext, dataPath: string, info: DataInfo): void {
+        addInformation(context: JsonContext, dataPath: string, info: NodeInfo): void {
             const entity = context.entity;
 
             let raw = undefined;

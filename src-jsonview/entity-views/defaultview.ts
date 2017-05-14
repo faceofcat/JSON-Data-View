@@ -63,14 +63,14 @@ namespace net.ndrei.json.entityviews {
             }
 
             organized[''].sort((a, b) => {
-                    if (!a && !b) {
+                    if (!a.index && !b.index) {
                         return 0;
                     }
-                    else if (!a && b) {
-                        return -1;
-                    }
-                    else if (a && !b) {
+                    else if (!a.index && b.index) {
                         return 1;
+                    }
+                    else if (a.index && !b.index) {
+                        return -1;
                     }
                     else if (a.index == b.index) {
                         return (a.label || '').localeCompare(b.label || '');

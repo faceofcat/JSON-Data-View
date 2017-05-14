@@ -35,30 +35,32 @@ namespace net.ndrei.json.entityminers {
                             }
                         }
 
+                        if (viewKey && (!dataViewRegistry || !dataViewRegistry[viewKey])) {
+                            // unknown view key
+                            viewKey = undefined;
+                        }
+
                         const dataPath = parentPath ? `${parentPath}.${memberName}`: memberName;
 
-                        const data = new JsonDataInfo(dataPath);
+                        const data: NodeInfo = ((viewKey && viewKey.length) || !$.isPlainObject(descriptor.value))
+                            ? new JsonDataInfo(dataPath)
+                            : new JsonEntityInfo(context.createChildContext(dataPath));
                         if (context.dataInfoProviders) {
                             context.dataInfoProviders.forEach(p => {
                                 p.addInformation(context, dataPath, data);
                             });
                         }
 
-                        if (viewKey && (!dataViewRegistry || !dataViewRegistry[viewKey])) {
-                            // unknown view key
-                            viewKey = undefined;
-                        }
-
-                        if ((!viewKey || !viewKey.length) && $.isPlainObject(descriptor.value)) {
-                            // looks like an unhandled object
-                            const childContext = context.createChildContext(dataPath);
-                            const child = new JsonEntityInfo(childContext);
-                            callback(child);
-                        }
-                        else if (viewKey) {
-                            data.viewKey = viewKey;
-                            callback(data);
-                        }
+                        // if ((!viewKey || !viewKey.length) && $.isPlainObject(descriptor.value)) {
+                        //     // looks like an unhandled object
+                        //     const childContext = context.createChildContext(dataPath);
+                        //     const child = new JsonEntityInfo(childContext, data);
+                        //     callback(child);
+                        // }
+                        // else if (viewKey) {
+                        data.viewKey = viewKey;
+                        callback(data);
+                        // }
                     }
                 });
             }

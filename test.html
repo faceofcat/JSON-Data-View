@@ -68,10 +68,13 @@
                         mihaitza: 'costel'
                     },
                     c: false,
-                    d: function() { console.log("Gigi was here!"); },
+                    d: function() { alert("Gigi was here!"); },
                     e: 5
                 },
-                test4: function(thing) { console.log('Gigi and ' + thing + ' were here!'); }
+                _test3Info: {
+                    index: -1
+                },
+                test4: function(thing) { alert('Gigi and ' + thing + ' were here!'); }
             };
             var view = net.ndrei.json.JSONView.create($('#gigi'), x);
 
