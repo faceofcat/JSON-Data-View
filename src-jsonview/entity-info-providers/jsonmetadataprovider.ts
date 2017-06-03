@@ -15,9 +15,7 @@ namespace net.ndrei.json.entityinfoproviders {
             }
 
             if (raw) {
-                const metadata = <{ // TODO: make this into a real type somewhere
-                    layoutKey?: string
-                }>raw;
+                const metadata = <EntityInfoProviderMeta>raw;
 
                 if (metadata.layoutKey) {
                     info.layoutKey = metadata.layoutKey;

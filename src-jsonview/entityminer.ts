@@ -5,7 +5,7 @@
 namespace net.ndrei.json {
     export const entityMinerRegistry: { [key: string]: EntityMiner } = {};
 
-    export interface EntityMiner {
-        digIntoEntity(entity: EntityInfo) : EntityInfo;
+    export abstract class EntityMiner {
+        abstract digIntoEntity(entity: EntityInfo) : EntityInfo;
     }
 }

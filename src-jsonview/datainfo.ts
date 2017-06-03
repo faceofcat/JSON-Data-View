@@ -6,22 +6,28 @@ namespace net.ndrei.json {
     /**
      * Interface used to describe a property
      */
-    export interface DataInfo extends NodeInfo {
-        getValue(context: JsonContext): any;
-
-        view: DataView;
-    }
-
-    export class JsonDataInfo extends JsonNodeInfo implements DataInfo {
+    export class DataInfo extends NodeInfo {
         constructor(dataPath: string) {
             super(dataPath);
         }
 
-        view: DataView = undefined;
-
         getValue(context: JsonContext): any {
             return context ? context.getValue(this.dataPath) : undefined;
         }
+
+        view: DataView = undefined;
+    // }
+
+    // export class JsonDataInfo extends JsonNodeInfo implements DataInfo {
+        // constructor(dataPath: string) {
+        //     super(dataPath);
+        // }
+
+        // view: DataView = undefined;
+
+        // getValue(context: JsonContext): any {
+        //     return context ? context.getValue(this.dataPath) : undefined;
+        // }
 
         toJSON(): any {
             return $.extend(super.toJSON(), {

@@ -43,7 +43,7 @@ namespace net.ndrei.json {
 
         get rootEntityInfo(): EntityInfo | undefined {
             if (!this._entityInfo) {
-                this._entityInfo = new JsonEntityInfo(this);
+                this._entityInfo = new EntityInfo(this);
             }
             return this._entityInfo;
         }

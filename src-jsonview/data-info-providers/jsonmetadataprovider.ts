@@ -5,43 +5,47 @@ namespace net.ndrei.json.datainfoproviders {
         constructor() {
         }
 
-        addInformation(context: JsonContext, dataPath: string, info: NodeInfo): void {
+        gatherInformation(context: JsonContext, dataPath: string): DataInfoProviderMeta {
             const entity = context.entity;
 
             let raw = undefined;
             const metadata = context.getValue(dataPath, '_metadata');
-            const memberName = dataPath.substr(dataPath.lastIndexOf('.') + 1);
+            const memberName = (dataPath || '').substr((dataPath || '').lastIndexOf('.') + 1);
 
             // step 1. look for {entity}._metadata.{member}
-            if (metadata && metadata[memberName]) {
-                raw = metadata[memberName];
-            }
+            raw = metadata ? metadata[memberName] : undefined;
             // step 2. look for {entity}._{member}Info
-            if (!raw) {
-                raw = context.getValue(dataPath, `_${memberName}Info`);
-            }
+            raw = $.extend({}, raw || {}, context.getValue(dataPath, `_${memberName}Info`) || {});
 
+            const final: DataInfoProviderMeta = {};
             if (raw) {
-                const metadata = <{ // TODO: make this into a real type somewhere
-                    label?: string,
-                    category?: string | string[],
-                    index?: number,
-                    viewKey?: string
-                }>raw;
+                const metadata = <DataInfoProviderMeta & { category: string | string[] }>raw;
 
                 if (metadata.label) {
-                    info.label = metadata.label;
+                    final.label = metadata.label;
                 }
-                if (metadata.category) {
-                    info.category = $.isArray(metadata.category) ? metadata.category : [metadata.category];
+
+                if (metadata.category && $.isArray(metadata.category)) {
+                    final.category = metadata.category;
                 }
+                else if (metadata.category && (typeof metadata.category == "string")) {
+                    final.category = metadata.category.split('.');
+                }
+
                 if (metadata.index) {
-                    info.index = metadata.index;
+                    final.index = metadata.index;
                 }
                 if (metadata.viewKey) {
-                    info.viewKey = metadata.viewKey;
+                    final.viewKey = metadata.viewKey;
+                }
+                if (metadata.layoutKey) {
+                    final.layoutKey = metadata.layoutKey;
+                }
+                if (metadata.data) {
+                    final.data = metadata.data;
                 }
             }
+            return final;
         }
     }
 }

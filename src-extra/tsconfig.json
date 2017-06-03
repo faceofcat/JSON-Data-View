@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "noImplicitAny": true,
+        "sourceMap": true,
+        "declaration": true
+    },
+    "include": [
+        "**/*.ts"
+    ],
+    "exclude": [
+        "*.d.ts"
+    ]
+}

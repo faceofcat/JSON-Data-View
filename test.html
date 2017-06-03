@@ -11,6 +11,9 @@
         <!--<link rel="stylesheet" href="pgrid.css" />-->
         <script type="text/javascript" src="jsonview.js"></script>
         <script type="text/javascript" src="pgrid.js"></script>
+
+        <script type="text/javascript" src="http://www.chartjs.org/dist/2.6.0/Chart.bundle.js"></script>
+        <script type="text/javascript" src="chartjs-array-view.js"></script>
     </head>
     <body>
         <table>
@@ -74,7 +77,23 @@
                 _test3Info: {
                     index: -1
                 },
-                test4: function(thing) { alert('Gigi and ' + thing + ' were here!'); }
+                test4: function(thing) { alert('Gigi and ' + thing + ' were here!'); },
+                test5: [2,4,1,7,5],
+                _test5Info: {
+                    viewKey: 'array-list'
+                },
+                test6: [2,4,1,7,5],
+                _test6Info: {
+                    viewKey: 'array-table'
+                },
+                test7: [2,4,1,7,5],
+                _test7Info: {
+                    viewKey: 'array-chart',
+                    data: {
+                        width: 175,
+                        height: 100
+                    }
+                }
             };
             var view = net.ndrei.json.JSONView.create($('#gigi'), x);
 

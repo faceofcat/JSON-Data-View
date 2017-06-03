@@ -39,7 +39,11 @@ gulp.task("pgrid", ["jsonView"], function() {
     return buildStuff("pgrid");
 });
 
-gulp.task("default", ["jsonView", "pgrid"], function () {
+gulp.task("extra", ["jsonView"], function() {
+    return buildStuff("extra");
+});
+
+gulp.task("default", ["jsonView", "pgrid", "extra"], function () {
     return gulp.src(htmlFiles)
         .pipe(gulp.dest(destPath));
 });

@@ -1,24 +1,36 @@
+/// <reference path="../logger.ts" />
 /// <reference path="../entityminer.ts" />
 /// <reference path="../data-views/objectview.ts" />
 
 namespace net.ndrei.json.entityminers {
     import ObjectDataView = net.ndrei.json.dataviews.ObjectDataView;
+    import Log = net.ndrei.json.logging.Log;
 
-    export class JsonMiner implements EntityMiner {
+    const LOG = new Log("json entity miner");
+
+    export class JsonMiner extends EntityMiner {
         digIntoEntity(info: EntityInfo): EntityInfo {
-            if (info && info.context) {
-                if (info.context.entityInfoProviders) {
-                    info.context.entityInfoProviders.forEach(p => {
-                        p.addInformation(info);
-                    });
+            try {
+                LOG.enterSection('json entity miner');
+                LOG.info('path: "{0}"', info.dataPath, info);
+
+                if (info && info.context) {
+                    if (info.context.entityInfoProviders) {
+                        info.context.entityInfoProviders.forEach(p => {
+                            p.addInformation(info);
+                        });
+                    }
+
+                    const entity = info.context.getValue();
+
+                    this.gatherEntityData(info.context.getJsonContext(), info.dataPath, entity, d => info.addChild(d));
                 }
 
-                const entity = info.context.getValue();
-
-                this.gatherEntityData(info.context.getJsonContext(), info.dataPath, entity, d => info.addData(d));
+                return info;
             }
-        
-            return info;
+            finally {
+                LOG.leaveSection();
+            }
         }
 
         private gatherEntityData(context: JsonContext, parentPath: string, entity: any, callback: (data: NodeInfo) => void) {
@@ -26,41 +38,46 @@ namespace net.ndrei.json.entityminers {
                 Object.getOwnPropertyNames(entity).forEach(memberName => {
                     if (!context.dataFilters || !context.dataFilters.length || context.dataFilters.every(f => f.canBeUsed(entity, memberName))) {
                         const descriptor = Object.getOwnPropertyDescriptor(entity, memberName);
-                        let viewKey: string = undefined;
-                        for(let index in (context.dataViewFactories || [])) {
-                            const factory = context.dataViewFactories[index];
-                            viewKey = factory ? factory.getViewKey(entity, memberName, descriptor) : null;
-                            if (viewKey) {
-                                break;
-                            }
-                        }
-
-                        if (viewKey && (!dataViewRegistry || !dataViewRegistry[viewKey])) {
-                            // unknown view key
-                            viewKey = undefined;
-                        }
-
                         const dataPath = parentPath ? `${parentPath}.${memberName}`: memberName;
-
-                        const data: NodeInfo = ((viewKey && viewKey.length) || !$.isPlainObject(descriptor.value))
-                            ? new JsonDataInfo(dataPath)
-                            : new JsonEntityInfo(context.createChildContext(dataPath));
+                        const metadata: DataInfoProviderMeta = {};
                         if (context.dataInfoProviders) {
                             context.dataInfoProviders.forEach(p => {
-                                p.addInformation(context, dataPath, data);
+                                $.extend(metadata, p.gatherInformation(context, dataPath));
                             });
                         }
 
-                        // if ((!viewKey || !viewKey.length) && $.isPlainObject(descriptor.value)) {
-                        //     // looks like an unhandled object
-                        //     const childContext = context.createChildContext(dataPath);
-                        //     const child = new JsonEntityInfo(childContext, data);
-                        //     callback(child);
-                        // }
-                        // else if (viewKey) {
-                        data.viewKey = viewKey;
-                        callback(data);
-                        // }
+                        if (!metadata.viewKey || !metadata.viewKey.length) {
+                            // find view key from factories
+                            let viewKey: string = undefined;
+                            for(let index in (context.dataViewFactories || [])) {
+                                const factory = context.dataViewFactories[index];
+                                viewKey = factory ? factory.getViewKey(entity, memberName, descriptor) : null;
+                                if (viewKey) {
+                                    break;
+                                }
+                            }
+                            metadata.viewKey = viewKey;
+                        }
+
+                        if (metadata.viewKey && (!dataViewRegistry || !dataViewRegistry[metadata.viewKey])) {
+                            // unknown view key
+                            LOG.debug(`Unknown data view key :'${metadata.viewKey}'.`);
+                            metadata.viewKey = undefined;
+                        }
+
+                        if ((typeof descriptor.value == "object") && (!metadata.viewKey || !metadata.viewKey.length)) {
+                            // this is an object with no specific view set...
+                            if (metadata.flattenHierarchy) {
+                                this.gatherEntityData(context, dataPath, descriptor.value, callback);
+                            }
+                            else {
+                                callback(new EntityInfo(context.createChildContext(dataPath)).apply(metadata));
+                            }
+                        }
+                        else {
+                            const data: NodeInfo = new DataInfo(dataPath).apply(metadata);
+                            callback(data);
+                        }
                     }
                 });
             }
