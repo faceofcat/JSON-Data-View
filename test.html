@@ -7,38 +7,49 @@
                 integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
                 crossorigin="anonymous"></script>
         <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/humanity/jquery-ui.css" />
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
         <link rel="stylesheet" href="jsonview.css" />
         <!--<link rel="stylesheet" href="pgrid.css" />-->
         <script type="text/javascript" src="jsonview.js"></script>
         <script type="text/javascript" src="pgrid.js"></script>
 
         <script type="text/javascript" src="http://www.chartjs.org/dist/2.6.0/Chart.bundle.js"></script>
-        <script type="text/javascript" src="chartjs-array-view.js"></script>
-        <script type="text/javascript" src="chartjs-data-filter.js"></script>
+        <script type="text/javascript" src="jsonview.extra.js"></script>
     </head>
     <body>
-        <table id="template" style="visibility: hidden;">
-            <tr style="text-align: center; font-family: arial; background-color: whitesmoke; border-bottom: 1px solid darkgray; padding: 5px; font-weight: bold; font-size: 14px;">
-                <td style="width: 250px">ORIGINAL</td>
-                <td style="width: 250px">PARSED</td>
-                <td style="width: 250px">VIEW TREE</td>
-                <td style="width: 250px">OUTPUT</td>
-            </tr>
-            <tr style="vertical-align: top;">
-                <td>
-                    <div id="mihaitza" />
-                </td>
-                <td>
-                    <div id="costelush" style="border-left: 1px solid steelblue; padding-left: 15px; border-right: 1px solid steelblue; padding-right: 15px;" />
-                </td>
-                <td>
-                    <div id="thingy" style="padding-left: 15px; border-right: 1px solid steelblue; padding-right: 15px;" />
-                </td>
-                <td>
-                    <div id="gigi" />
-                </td>
-            </tr>
-        </table>
+        <div id="template" class="panel panel-default" style="display: none;">
+            <div class="panel-heading"><h3>TITLE</h3></div>
+            <div class="panel-body">
+                <table class="table">
+                    <tr id="header">
+                        <td id="source" style="width: 50%">
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" class="active"><a href="#original" aria-controls="original" role="tab" data-toggle="tab">Original</a></li>
+                                <li role="presentation"><a href="#parsed" aria-controls="parsed" role="tab" data-toggle="tab">Parsed</a></li>
+                                <li role="presentation"><a href="#view" aria-controls="view" role="tab" data-toggle="tab">View Tree</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="original"></div>
+                                <div role="tabpanel" class="tab-pane" id="parsed"></div>
+                                <div role="tabpanel" class="tab-pane" id="view"></div>
+                            </div>
+                        </td>
+                        <td style="width: 50%">
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" class="active"><a href="#gigi" aria-controls="gigi" role="tab" data-toggle="tab">Output</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="gigi"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
         <script type="text/javascript">
             var x = [
                 {
@@ -192,21 +203,30 @@
                 //     }
                 //     return v;
                 // }, 2)).appendTo(container.find('#mihaitza'));
-                net.ndrei.json.JSONView.create(container.find('#mihaitza'), xx.data, jsonConfig);
+                net.ndrei.json.JSONView.create(container.find('#original'), xx.data, jsonConfig);
 
                 // $('<pre />')
                 //     .text(JSON.stringify(view.context.rootEntityInfo, null, 2))
                 //     .appendTo(container.find('#costelush'));
-                net.ndrei.json.JSONView.create(container.find('#costelush'), view.context.rootEntityInfo, jsonConfig);
+                net.ndrei.json.JSONView.create(container.find('#parsed'), view.context.rootEntityInfo, jsonConfig);
 
                 // $('<pre />')
                 //     .text(JSON.stringify(view.viewTree.root, null, 2))
                 //     .appendTo(container.find('#thingy'));
-                net.ndrei.json.JSONView.create(container.find('#thingy'), view.viewTree.root, jsonConfig);
+                net.ndrei.json.JSONView.create(container.find('#view'), view.viewTree.root, jsonConfig);
 
-                container.css({ visibility: 'visible' });
-                $('#template').parent().append($('<h3 />').text(xx.title));
+                container.find('.panel-heading > h3').text(xx.title);
                 $('#template').parent().append(container);
+                container.show();
+
+                container.on('click', 'ul.nav-tabs a', function (e) {
+                    e.preventDefault()
+                    var tab = $(this).attr('href');
+                    tab = tab.substr(tab.lastIndexOf('#') + 1);
+
+                    container.find('#source div.tab-content > div').removeClass('active');
+                    container.find('#source div.tab-content > div#' + tab).addClass('active');
+                })
             });
         </script>
     </body>
