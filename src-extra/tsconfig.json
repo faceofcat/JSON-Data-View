@@ -3,7 +3,9 @@
         "target": "ES5",
         "noImplicitAny": true,
         "sourceMap": true,
-        "declaration": true
+        "declaration": true,
+        "outFile": "jsonview.extra.js",
+        "noEmitOnError": true
     },
     "include": [
         "**/*.ts"
