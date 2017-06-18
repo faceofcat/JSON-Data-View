@@ -67,12 +67,12 @@ namespace net.ndrei.json.entityminers {
 
                         if ((typeof descriptor.value == "object") && (!metadata.viewKey || !metadata.viewKey.length)) {
                             // this is an object with no specific view set...
-                            if (metadata.flattenHierarchy) {
-                                this.gatherEntityData(context, dataPath, descriptor.value, callback);
-                            }
-                            else {
+                            // if (metadata.flattenHierarchy) {
+                            //     this.gatherEntityData(context, dataPath, descriptor.value, callback);
+                            // }
+                            // else {
                                 callback(new EntityInfo(context.createChildContext(dataPath)).apply(metadata));
-                            }
+                            // }
                         }
                         else {
                             const data: NodeInfo = new DataInfo(dataPath).apply(metadata);

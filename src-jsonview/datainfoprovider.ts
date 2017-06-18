@@ -37,12 +37,6 @@ namespace net.ndrei.json {
          * Additional config data for the view.
          */
         data?: any
-
-        /**
-         * Merge this entity's properties with the parent's properties
-         * only makes sense when the data member is an object
-         */
-        flattenHierarchy?: boolean;
     }
 
     export abstract class DataInfoProvider {

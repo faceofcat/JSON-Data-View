@@ -1,6 +1,6 @@
 namespace net.ndrei.json {
     /**
-     * Base interface for DataInfo (property) and EntityInfo (object).
+     * Base class for DataInfo (property) and EntityInfo (object).
      */
     export class NodeInfo {
         private _label: string = undefined;
@@ -42,11 +42,6 @@ namespace net.ndrei.json {
          */
         layoutKey: string = undefined;
 
-        // /**
-        //  * Data path used to get the value for this node relative to the root entity
-        //  */
-        // readonly dataPath: string;
-
         /**
          * Parent entity
          * (null for root entity info)
@@ -54,35 +49,9 @@ namespace net.ndrei.json {
         parent: EntityInfo = undefined;
 
         /**
-         * Extra configuration data that shuld come from metadata miners
+         * Extra configuration data that should come from metadata miners
          */
         data: any = undefined;
-    // }
-
-    // export class JsonNodeInfo implements NodeInfo {
-        // private _label: string = undefined;
-
-        // constructor(public readonly dataPath: string) {
-        // }
-
-        // get label(): string {
-        //     return this._label || (this.dataPath ? this.dataPath.substr(this.dataPath.lastIndexOf('.') + 1) : '');
-        // }
-        // set label(value: string) {
-        //     this._label = value;
-        // }
-
-        // todo: consider moving these to get{thing} / set{thing} methods so they can be overriden
-
-        // category: string[] = undefined;
-        // index: number = undefined;
-
-        // viewKey: string = undefined;
-        // layoutKey: string = undefined;
-
-        // parent: EntityInfo = undefined;
-
-        // data: any = undefined;
 
         apply(metadata: DataInfoProviderMeta) : NodeInfo {
             if (metadata) {

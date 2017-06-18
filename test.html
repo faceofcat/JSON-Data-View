@@ -14,20 +14,25 @@
 
         <script type="text/javascript" src="http://www.chartjs.org/dist/2.6.0/Chart.bundle.js"></script>
         <script type="text/javascript" src="chartjs-array-view.js"></script>
+        <script type="text/javascript" src="chartjs-data-filter.js"></script>
     </head>
     <body>
-        <table>
+        <table id="template" style="visibility: hidden;">
             <tr style="text-align: center; font-family: arial; background-color: whitesmoke; border-bottom: 1px solid darkgray; padding: 5px; font-weight: bold; font-size: 14px;">
-                <td>ORIGINAL</td>
-                <td>PARSED</td>
-                <td>OUTPUT</td>
+                <td style="width: 250px">ORIGINAL</td>
+                <td style="width: 250px">PARSED</td>
+                <td style="width: 250px">VIEW TREE</td>
+                <td style="width: 250px">OUTPUT</td>
             </tr>
-            <tr style="vertical-align: top">
+            <tr style="vertical-align: top;">
                 <td>
-                    <div id="mihaitza" style="border-left: 1px solid steelblue; padding-left: 25px; margin-left: 25px;" />
+                    <div id="mihaitza" />
                 </td>
                 <td>
-                    <div id="costelush" style="border-left: 1px solid steelblue; padding-left: 25px; margin-left: 25px;" />
+                    <div id="costelush" style="border-left: 1px solid steelblue; padding-left: 15px; border-right: 1px solid steelblue; padding-right: 15px;" />
+                </td>
+                <td>
+                    <div id="thingy" style="padding-left: 15px; border-right: 1px solid steelblue; padding-right: 15px;" />
                 </td>
                 <td>
                     <div id="gigi" />
@@ -35,78 +40,174 @@
             </tr>
         </table>
         <script type="text/javascript">
-            var x = {
-                test1: 5,
-                test2: 'mihaitza',
-                'null': null,
-                _fake: 425,
-                __really_fake: 425,
-                test3: {
-                    _metadata: {
-                        a: {
-                            label: 'costelush',
-                            category: 'GIGI'
-                        },
-                        b: {
-                            label: 'mihaitza'
-                        },
-                        e : {
-                            label: 'fake boolean',
-                            viewKey: 'boolean',
-                            category: 'GIGI'
-                        },
-                        c: {
-                            category: ['GIGI']
-                        }
-                    },
-                    a: 42,
-                    b: '425',
-                    xxx: {
+            var x = [
+                {
+                    title: 'No Metadata',
+                    data: {
+                        mihaitza: 5,
+                        costelush: 'test'
+                    }
+                },
+                {
+                    title: "Forcing 'Number' property to be displayed as 'String'",
+                    data: {
+                        _mihaitzaInfo: { viewKey: 'string' },
+                        mihaitza: 5,
+                        costelush: 'test'
+                    }
+                },
+                {
+                    title: 'Categories',
+                    data: {
+                        _mihaitzaInfo: { category: 'Numbers' },
+                        _costelushInfo: { category: 'Strings' },
+                        mihaitza: 5,
+                        costelush: 'test'
+                    }
+                },
+                {
+                    title: 'Category Metadata',
+                    data: {
                         _metadata: {
                             _info: {
-                                layoutKey: 'table'
+                                categoriesInfo: {
+                                    'Strings': 'table'
+                                }
                             }
                         },
-                        costel: 'mihaitza',
-                        mihaitza: 'costel'
-                    },
-                    c: false,
-                    d: function() { alert("Gigi was here!"); },
-                    e: 5
+                        _mihaitzaInfo: { category: 'Numbers' },
+                        _costelushInfo: { category: 'Strings' },
+                        _gigelInfo: { category: 'Strings' },
+                        mihaitza: 5,
+                        costelush: 'test',
+                        gigel: 'This is Gigi!'
+                    }
                 },
-                _test3Info: {
-                    index: -1
-                },
-                test4: function(thing) { alert('Gigi and ' + thing + ' were here!'); },
-                test5: [2,4,1,7,5],
-                _test5Info: {
-                    viewKey: 'array-list'
-                },
-                test6: [2,4,1,7,5],
-                _test6Info: {
-                    viewKey: 'array-table'
-                },
-                test7: [2,4,1,7,5],
-                _test7Info: {
-                    viewKey: 'array-chart',
+                {
+                    title: 'Nested Objects',
                     data: {
-                        width: 175,
-                        height: 100
+                        mihaitza: 5,
+                        costelush: {
+                            gigi: 'test',
+                            gigel: 42
+                        }
+                    }
+                },
+                {
+                    title: 'Nested Categories',
+                    data: {
+                        _mihaitzaInfo: { category: 'A' },
+                        mihaitza: 5,
+                        costelush: {
+                            _gigiInfo: { category: 'A' },
+                            _gigelInfo: { category: ['_', 'B'] },
+                            _gicutzaInfo: { category: ['B'] },
+                            _testInfo: { category: '_.A' },
+                            gigi: 'test',
+                            gigel: 42,
+                            gicutza: 'testy',
+                            test: 425
+                        }
+                    }
+                },
+                {
+                    title: 'BIG THINGY',
+                    data: {
+                        test1: 5,
+                        test2: 'mihaitza',
+                        'null': null,
+                        _fake: 425,
+                        __really_fake: 425,
+                        test3: {
+                            _metadata: {
+                                a: {
+                                    label: 'costelush',
+                                    category: 'GIGI'
+                                },
+                                b: {
+                                    label: 'mihaitza'
+                                },
+                                e: {
+                                    label: 'fake boolean',
+                                    viewKey: 'boolean',
+                                    category: 'GIGI'
+                                },
+                                c: {
+                                    category: ['GIGI']
+                                }
+                            },
+                            a: 42,
+                            b: '425',
+                            xxx: {
+                                _metadata: {
+                                    _info: {
+                                        layoutKey: 'table'
+                                    }
+                                },
+                                costel: 'mihaitza',
+                                mihaitza: 'costel'
+                            },
+                            c: false,
+                            d: function () { alert("Gigi was here!"); },
+                            e: 5
+                        },
+                        _test3Info: {
+                            index: -1
+                        },
+                        test4: function (thing) { alert('Gigi and ' + thing + ' were here!'); },
+                        test5: [2, 4, 1, 7, 5],
+                        _test5Info: {
+                            viewKey: 'array-list'
+                        },
+                        test6: [2, 4, 1, 7, 5],
+                        _test6Info: {
+                            viewKey: 'array-table'
+                        },
+                        test7: [2, 4, 1, 7, 5],
+                        _test7Info: {
+                            viewKey: 'array-chart',
+                            data: {
+                                width: 175,
+                                height: 100
+                            }
+                        }
                     }
                 }
-            };
-            var view = net.ndrei.json.JSONView.create($('#gigi'), x);
+            ];
 
-            $('<pre />').text(JSON.stringify(x, function(k, v) {
-                if ($.isFunction(v)) {
-                    return '<function>';
-                }
-                return v;
-            }, 2)).appendTo($('#mihaitza'));
-            $('<pre />').text(JSON.stringify(view.context.rootEntityInfo, /* function(k, v) {
-                if (k == 'value') { return '{{value}}'; }
-                return v;
-            } */ null, 2)).appendTo($('#costelush'));
+            var jsonConfig = {
+                filterKeys: ['chartJS'],
+                dataInfoProviderKeys: [],
+                entityInfoProviderKeys: [],
+                categoryLayoutKey: 'json'
+            };
+
+            x.forEach(function (xx) {
+                var container = $('#template').clone();
+
+                var view = net.ndrei.json.JSONView.create(container.find('#gigi'), xx.data);
+                // $('<pre />').text(JSON.stringify(xx.data, function(k, v) {
+                //     if ($.isFunction(v)) {
+                //         return '<function>';
+                //     }
+                //     return v;
+                // }, 2)).appendTo(container.find('#mihaitza'));
+                net.ndrei.json.JSONView.create(container.find('#mihaitza'), xx.data, jsonConfig);
+
+                // $('<pre />')
+                //     .text(JSON.stringify(view.context.rootEntityInfo, null, 2))
+                //     .appendTo(container.find('#costelush'));
+                net.ndrei.json.JSONView.create(container.find('#costelush'), view.context.rootEntityInfo, jsonConfig);
+
+                // $('<pre />')
+                //     .text(JSON.stringify(view.viewTree.root, null, 2))
+                //     .appendTo(container.find('#thingy'));
+                net.ndrei.json.JSONView.create(container.find('#thingy'), view.viewTree.root, jsonConfig);
+
+                container.css({ visibility: 'visible' });
+                $('#template').parent().append($('<h3 />').text(xx.title));
+                $('#template').parent().append(container);
+            });
         </script>
     </body>
 </html>

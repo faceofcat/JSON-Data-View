@@ -10,7 +10,7 @@ namespace net.ndrei.json.datacategorylayouts {
 
         public initialize(container: JQuery): BaseLayout {
             this.container = container;
-            this.container.append($(`<div class="category-list-label">${this.label}</div>`));
+            this.label && this.label.length && this.container.append($(`<div class="category-label category-list-label">${this.label}</div>`));
             this.ul = $('<ul class="category-list" />');
             this.ul.data({ layout: this });
             this.container.append(this.ul);
@@ -27,5 +27,5 @@ namespace net.ndrei.json.datacategorylayouts {
     }
 }
 
-net.ndrei.json.dataCategoryLayoutRegistry['default'] = (label: string) =>
+net.ndrei.json.dataCategoryLayoutRegistry['list'] = (label: string) =>
     new net.ndrei.json.datacategorylayouts.CategoryDataList(label);

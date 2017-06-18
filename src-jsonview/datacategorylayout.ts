@@ -6,4 +6,9 @@ namespace net.ndrei.json {
     export interface DataCategoryLayout extends BaseLayout {
         addData(data: BaseLayout): DataCategoryLayout;
     }
+
+    export interface DataCategoryLayoutInfo {
+        layoutKey?: string;
+        layoutData?: any;
+    }
 }

@@ -1,6 +1,5 @@
 /// <reference path="datafilter.ts" />
 /// <reference path="dataviewfactory.ts" />
-/// <reference path="entityview.ts" />
 /// <reference path="entitycontext.ts" />
 /// <reference path="entityminer.ts" />
 /// <reference path="entityinfoprovider.ts" />
@@ -16,29 +15,23 @@ namespace net.ndrei.json {
             dataInfoProviders: DataInfoProvider[],
             dataViewFactories: DataViewFactory[],
             miner: EntityMiner,
-            public readonly entityViewBuilder: (entity: EntityInfo) => EntityView,
+            public readonly defaultDataLayoutKey: string = 'labeled',
+            public readonly defaultCategoryLayoutKey: string = 'list',
+            // public readonly entityViewBuilder: (entity: EntityInfo) => EntityView,
             public readonly container: JQuery,
             public readonly entity: any,
             public readonly entityLayoutKey: string = 'list') {
             super(undefined, entityInfoProviders, dataFilters, dataInfoProviders, dataViewFactories, miner);
+
+            // TODO: add EntityPreProcessor interface to handle this
+            // test for 'toJSON' method
+            if ($.isFunction(entity.toJSON)) {
+                this.entity = entity.toJSON() || entity;
+            }
         }
 
         getJsonContext(): JsonContext {
             return this;
-        }
-
-        public render() {
-            const entity = this.rootEntityInfo;
-            const entityLayoutKey = (entity ? entity.layoutKey : undefined) || 'list';
-            const entityLayoutBuilder = entityLayoutRegistry ? entityLayoutRegistry[entityLayoutKey] : undefined;
-            const entityLayout = entityLayoutBuilder ? entityLayoutBuilder() : undefined;
-            if (entityLayout) {
-                const view = getEntityView(entity);
-                if (view) {
-                    entityLayout.initialize(this.container);
-                    view.render(entityLayout);
-                }
-            }
         }
 
         get rootEntityInfo(): EntityInfo | undefined {
@@ -47,19 +40,6 @@ namespace net.ndrei.json {
             }
             return this._entityInfo;
         }
-
-        // clone(container: JQuery, entity: any, entityLayoutKey: string = null): JsonContext {
-        //     return new JsonContext(
-        //         this.entityInfoProviders,
-        //         this.dataFilters,
-        //         this.dataInfoProviders,
-        //         this.dataViewFactories,
-        //         this.miner,
-        //         this.entityViewBuilder,
-        //         container || this.container,
-        //         entity || this.entity,
-        //         entityLayoutKey || this.entityLayoutKey);
-        // }
 
         getValue(dataPath: string, overrideLastPart: string = undefined) {
             let result = this.entity;
@@ -70,6 +50,8 @@ namespace net.ndrei.json {
 
                 if (p && p.length) {
                     result = result[p];
+                    // TODO: add EntityPreProcessor interface to handle this
+                    result && $.isFunction(result.toJSON) && (result = result.toJSON() || result);
                 }
                 
                 return (result != undefined) && (result != null);

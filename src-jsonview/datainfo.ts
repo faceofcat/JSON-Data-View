@@ -6,7 +6,7 @@ namespace net.ndrei.json {
     /**
      * Interface used to describe a property
      */
-    export class DataInfo extends NodeInfo {
+    export class DataInfo extends NodeInfo implements DataInfoProviderMeta {
         constructor(dataPath: string) {
             super(dataPath);
         }
@@ -16,18 +16,6 @@ namespace net.ndrei.json {
         }
 
         view: DataView = undefined;
-    // }
-
-    // export class JsonDataInfo extends JsonNodeInfo implements DataInfo {
-        // constructor(dataPath: string) {
-        //     super(dataPath);
-        // }
-
-        // view: DataView = undefined;
-
-        // getValue(context: JsonContext): any {
-        //     return context ? context.getValue(this.dataPath) : undefined;
-        // }
 
         toJSON(): any {
             return $.extend(super.toJSON(), {
